@@ -21,7 +21,7 @@ title                    : "Site Title"
 title_separator          : "-"
 subtitle                 : # site tagline that appears below site title in masthead
 name                     : "Taekyeong Jeon"
-description              : "기술 블로그"
+description              : ""
 url                      : "https://xorud1541.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : ""
 url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
@@ -110,10 +110,10 @@ analytics:
 
 # Site Author
 author:
-  name             : "Your Name"
+  name             : "Taekyeong Jeon"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an **amazing** person."
-  location         : "Somewhere"
+  bio              : "기술 블로그"
+  location         : "Suwon"
   email            :
   links:
     - label: "Email"
