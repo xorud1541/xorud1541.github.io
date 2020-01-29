@@ -1,4 +1,5 @@
 ---
+layout: post
 title: "포인터란 무엇인가?"
 date: 2020-01-29 08:26:28 -0400
 categories: 개발
