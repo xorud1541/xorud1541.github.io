@@ -13,7 +13,7 @@ url:                 https://xorud1541.github.io
 baseurl:             ""
 
 # A very short description of your page
-tagline:             "No pain, No Gain."
+tagline:             "No Pain, No Gain."
 
 # A short description of the page, used in the sidebar and as fallback for the meta description tag.
 # Markdown enabled, but don't use more than one paragraph (enforced by `>`)
