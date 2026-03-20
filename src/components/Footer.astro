@@ -3,14 +3,18 @@ const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} xorud1541. All rights reserved.
+	&copy; {today.getFullYear()} 경험과 기록. All rights reserved.
 </footer>
 <style>
 	footer {
-		padding: 2em 1em;
+		width: min(1120px, calc(100% - 2rem));
+		margin: 0 auto 2.5rem;
+		padding: 1.4rem 1.6rem;
 		color: rgb(var(--gray));
 		text-align: center;
-		border-top: 1px solid rgb(var(--gray-light));
+		border: 1px solid var(--line);
+		border-radius: 14px;
+		background: #fff;
 		font-size: 0.875em;
 	}
 </style>

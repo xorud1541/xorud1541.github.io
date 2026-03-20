@@ -1,10 +1,17 @@
 :root {
-	--accent: #333;
-	--accent-dark: #111;
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
+	--accent: #111111;
+	--accent-dark: #000000;
+	--accent-soft: #f3f3f3;
+	--surface: #ffffff;
+	--surface-muted: #fafafa;
+	--surface-strong: #f5f5f5;
+	--black: 17, 17, 17;
+	--gray: 110, 110, 110;
+	--gray-light: 232, 232, 232;
+	--gray-dark: 34, 34, 34;
+	--line: rgba(17, 17, 17, 0.08);
+	--shadow-soft: 0 10px 30px rgba(17, 17, 17, 0.04);
+	--shadow-card: 0 6px 20px rgba(17, 17, 17, 0.03);
 }
 @font-face {
 	font-family: "Atkinson";
@@ -25,7 +32,7 @@ body {
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background: #fff;
+	background: #fcfcfc;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	color: rgb(var(--gray-dark));
@@ -33,10 +40,9 @@ body {
 	line-height: 1.7;
 }
 main {
-	width: 720px;
-	max-width: calc(100% - 2em);
+	width: min(1120px, calc(100% - 2rem));
 	margin: auto;
-	padding: 3em 1em;
+	padding: 3.5rem 0 4.5rem;
 }
 h1,
 h2,
@@ -69,6 +75,10 @@ b {
 }
 a {
 	color: var(--accent);
+	transition:
+		color 160ms ease,
+		opacity 160ms ease,
+		transform 160ms ease;
 }
 a:hover {
 	color: var(--accent-dark);
@@ -96,18 +106,20 @@ img {
 }
 code {
 	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
+	background-color: #f2f2f2;
+	border-radius: 6px;
 }
 pre {
 	padding: 1.5em;
-	border-radius: 8px;
+	border-radius: 12px;
+	background: #111;
+	color: #f6f6f6;
 }
 pre > code {
 	all: unset;
 }
 blockquote {
-	border-left: 3px solid rgb(var(--gray-light));
+	border-left: 3px solid rgba(17, 17, 17, 0.18);
 	padding: 0 0 0 20px;
 	margin: 0;
 	font-size: 1.1em;
@@ -115,7 +127,7 @@ blockquote {
 }
 hr {
 	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
+	border-top: 1px solid var(--line);
 }
 @media (max-width: 720px) {
 	body {
