@@ -8,7 +8,28 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-).slice(0, 5);
+);
+
+const slugify = (value: string) =>
+	value
+		.toLowerCase()
+		.replace(/\s+/g, '-')
+		.replace(/[^\w\u3131-\uD79D-]/g, '');
+
+const groupedPosts = Object.entries(
+	posts.reduce<Record<string, typeof posts>>((groups, post) => {
+		const key = post.data.category;
+		if (!groups[key]) groups[key] = [];
+		groups[key].push(post);
+		return groups;
+	}, {}),
+)
+	.sort(([a], [b]) => a.localeCompare(b, 'ko'))
+	.map(([category, categoryPosts]) => ({
+		category,
+		categoryPosts,
+		sectionId: slugify(category),
+	}));
 ---
 
 <!doctype html>
@@ -18,88 +39,206 @@ const posts = (await getCollection('blog')).sort(
 	</head>
 	<body>
 		<Header />
-		<main>
+		<main class="blog-page">
 			<section class="intro">
-				<p>개발하며 배운 것들을 기록하는 블로그입니다.</p>
+				<p class="eyebrow">Blog</p>
+				<h1>AGI시대에서 개발자로 살아남기</h1>
 			</section>
-			<section>
-				<h2>최근 글</h2>
-				<ul>
+
+			<div class="layout">
+				<aside class="sidebar">
+					<div class="sidebar-card">
+						<p class="sidebar-title">Categories</p>
+						<ul class="category-list">
+							{
+								groupedPosts.map(({ category, categoryPosts, sectionId }) => (
+									<li>
+										<a href={`#${sectionId}`}>
+											<span>{category}</span>
+											<span class="count">{categoryPosts.length}</span>
+										</a>
+									</li>
+								))
+							}
+						</ul>
+					</div>
+				</aside>
+
+				<section class="content">
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									<span class="title">{post.data.title}</span>
-									<span class="date"><FormattedDate date={post.data.pubDate} /></span>
-								</a>
-							</li>
+						groupedPosts.map(({ category, categoryPosts, sectionId }) => (
+							<section class="category-section" id={sectionId}>
+								<div class="section-head">
+									<h2>{category}</h2>
+									<span class="count-label">{categoryPosts.length} posts</span>
+								</div>
+								<div class="post-list">
+									{
+										categoryPosts.map((post) => (
+											<a class="post-item" href={`/blog/${post.id}/`}>
+												<div class="post-top">
+													<span class="badge">{post.data.category}</span>
+													<span class="date"><FormattedDate date={post.data.pubDate} /></span>
+												</div>
+												<h3>{post.data.title}</h3>
+												{post.data.description && <p>{post.data.description}</p>}
+											</a>
+										))
+									}
+								</div>
+							</section>
 						))
 					}
-				</ul>
-				<a href="/blog" class="all-posts">모든 글 보기 &rarr;</a>
-			</section>
+				</section>
+			</div>
 		</main>
 		<Footer />
 	</body>
 </html>
 
 <style>
+	.blog-page {
+		display: grid;
+		gap: 2rem;
+	}
 	.intro {
-		margin-bottom: 2em;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line);
 	}
-	.intro p {
+	.eyebrow,
+	.sidebar-title {
+		margin: 0 0 0.6rem;
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
 		color: rgb(var(--gray));
-		font-size: 1.1em;
 	}
-	h2 {
-		font-size: 1.25em;
-		margin-bottom: 1em;
+	h1 {
+		margin: 0;
+		font-size: clamp(2.2rem, 5vw, 3.8rem);
+		line-height: 1.02;
+		letter-spacing: -0.04em;
 	}
-	ul {
+	.layout {
+		display: grid;
+		grid-template-columns: 220px minmax(0, 1fr);
+		gap: 2rem;
+		align-items: start;
+	}
+	.sidebar {
+		position: sticky;
+		top: 5.8rem;
+	}
+	.sidebar-card {
+		padding: 1rem;
+		border: 1px solid var(--line);
+		border-radius: 14px;
+		background: #fff;
+	}
+	.category-list {
 		list-style: none;
 		padding: 0;
 		margin: 0;
+		display: grid;
+		gap: 0.35rem;
 	}
-	ul li {
-		border-bottom: 1px solid rgb(var(--gray-light));
+	.category-list a {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.75rem 0.8rem;
+		border-radius: 10px;
+		text-decoration: none;
+		color: rgb(var(--gray-dark));
 	}
-	ul li a {
+	.category-list a:hover {
+		background: #f6f6f6;
+	}
+	.content {
+		display: grid;
+		gap: 2rem;
+	}
+	.category-section {
+		display: grid;
+		gap: 1rem;
+	}
+	.section-head {
 		display: flex;
 		justify-content: space-between;
 		align-items: baseline;
-		padding: 0.75em 0;
-		text-decoration: none;
-		color: rgb(var(--gray-dark));
+		padding-bottom: 0.75rem;
+		border-bottom: 1px solid var(--line);
 	}
-	ul li a:hover .title {
-		color: rgb(var(--black));
+	h2 {
+		margin: 0;
+		font-size: 1.5rem;
 	}
-	.title {
-		font-weight: 600;
-	}
-	.date {
-		color: rgb(var(--gray));
-		font-size: 0.875em;
-		white-space: nowrap;
-		margin-left: 1em;
-	}
-	.all-posts {
-		display: inline-block;
-		margin-top: 1em;
-		font-size: 0.9em;
-		text-decoration: none;
+	.count,
+	.count-label,
+	.date,
+	.post-item p {
 		color: rgb(var(--gray));
 	}
-	.all-posts:hover {
+	.post-list {
+		display: grid;
+		gap: 0.85rem;
+	}
+	.post-item {
+		display: grid;
+		gap: 0.75rem;
+		padding: 1.1rem 1.15rem;
+		border: 1px solid var(--line);
+		border-radius: 14px;
+		background: #fff;
+		text-decoration: none;
+		color: inherit;
+	}
+	.post-item:hover {
+		background: #fafafa;
+	}
+	.post-top {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+	}
+	.badge {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.28rem 0.7rem;
+		border-radius: 999px;
+		background: #f3f3f3;
+		font-size: 0.78rem;
+		font-weight: 700;
 		color: rgb(var(--gray-dark));
+	}
+	h3 {
+		margin: 0;
+		font-size: 1.2rem;
+		line-height: 1.2;
+	}
+	.post-item p {
+		margin: 0;
+		font-size: 0.95rem;
+		line-height: 1.6;
+	}
+	@media (max-width: 900px) {
+		.layout {
+			grid-template-columns: 1fr;
+		}
+		.sidebar {
+			position: static;
+		}
 	}
 	@media (max-width: 720px) {
-		ul li a {
-			flex-direction: column;
-			gap: 0.25em;
+		.blog-page {
+			gap: 1.4rem;
 		}
-		.date {
-			margin-left: 0;
+		.section-head,
+		.post-top {
+			flex-direction: column;
+			align-items: flex-start;
 		}
 	}
 </style>
