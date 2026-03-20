@@ -9,6 +9,14 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+const groupedPosts = Object.entries(
+	posts.reduce<Record<string, typeof posts>>((groups, post) => {
+		const key = post.data.category;
+		if (!groups[key]) groups[key] = [];
+		groups[key].push(post);
+		return groups;
+	}, {}),
+).sort(([a], [b]) => a.localeCompare(b, 'ko'));
 ---
 
 <!doctype html>
@@ -20,23 +28,43 @@ const posts = (await getCollection('blog')).sort(
 		<Header />
 		<main>
 			<h1>Blog</h1>
-			<ul>
+			<div class="category-summary">
 				{
-					posts.map((post) => (
-						<li>
-							<a href={`/blog/${post.id}/`}>
-								<div class="post-header">
-									<span class="title">{post.data.title}</span>
-									<span class="date"><FormattedDate date={post.data.pubDate} /></span>
-								</div>
-								{post.data.description && (
-									<p class="description">{post.data.description}</p>
-								)}
-							</a>
-						</li>
+					groupedPosts.map(([category, categoryPosts]) => (
+						<span class="summary-chip">{category} {categoryPosts.length}</span>
 					))
 				}
-			</ul>
+			</div>
+			{
+				groupedPosts.map(([category, categoryPosts]) => (
+					<section class="category-section">
+						<div class="category-heading">
+							<h2>{category}</h2>
+							<span>{categoryPosts.length} posts</span>
+						</div>
+						<ul>
+							{
+								categoryPosts.map((post) => (
+									<li>
+										<a href={`/blog/${post.id}/`}>
+											<div class="post-header">
+												<div class="post-meta">
+													<span class="category-badge">{post.data.category}</span>
+													<span class="title">{post.data.title}</span>
+												</div>
+												<span class="date"><FormattedDate date={post.data.pubDate} /></span>
+											</div>
+											{post.data.description && (
+												<p class="description">{post.data.description}</p>
+											)}
+										</a>
+									</li>
+								))
+							}
+						</ul>
+					</section>
+				))
+			}
 		</main>
 		<Footer />
 	</body>
@@ -45,7 +73,38 @@ const posts = (await getCollection('blog')).sort(
 <style>
 	h1 {
 		font-size: 1.5em;
-		margin-bottom: 1.5em;
+		margin-bottom: 0.75em;
+	}
+	h2 {
+		margin: 0;
+		font-size: 1.1em;
+	}
+	.category-summary {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 2rem;
+	}
+	.summary-chip,
+	.category-badge {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.25rem 0.7rem;
+		border-radius: 999px;
+		background: rgb(var(--gray-light));
+		color: rgb(var(--gray-dark));
+		font-size: 0.8rem;
+		font-weight: 600;
+	}
+	.category-section {
+		margin-bottom: 2rem;
+	}
+	.category-heading {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: 0.75rem;
+		color: rgb(var(--gray-dark));
 	}
 	ul {
 		list-style: none;
@@ -68,6 +127,13 @@ const posts = (await getCollection('blog')).sort(
 		display: flex;
 		justify-content: space-between;
 		align-items: baseline;
+		gap: 1rem;
+	}
+	.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.6rem;
 	}
 	.title {
 		font-weight: 600;
@@ -86,9 +152,11 @@ const posts = (await getCollection('blog')).sort(
 		line-height: 1.5;
 	}
 	@media (max-width: 720px) {
+		.category-heading,
 		.post-header {
 			flex-direction: column;
 			gap: 0.25em;
+			align-items: flex-start;
 		}
 		.date {
 			margin-left: 0;

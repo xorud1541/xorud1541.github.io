@@ -1,6 +1,7 @@
 ﻿---
 title: 'Claude Code 200% 활용하기 2편: 실전 운영법'
 description: '문제 정의, 계획 점검, 명확한 표현까지 AI 에이전트를 실전에서 더 정확하게 다루는 방법'
+category: 'AI도구'
 pubDate: 'Mar 05 2026'
 ---
 

@@ -8,7 +8,7 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, category, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
 <html lang="ko">
@@ -48,6 +48,18 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				color: rgb(var(--gray));
 				font-size: 0.9em;
 			}
+			.category {
+				display: inline-flex;
+				align-items: center;
+				margin-bottom: 0.75em;
+				padding: 0.3rem 0.75rem;
+				border-radius: 999px;
+				background: rgb(var(--gray-light));
+				color: rgb(var(--gray-dark));
+				font-size: 0.8rem;
+				font-weight: 600;
+				letter-spacing: 0.02em;
+			}
 			.last-updated-on {
 				font-style: italic;
 			}
@@ -63,6 +75,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				</div>
 				<div class="prose">
 					<div class="title">
+						<div class="category">{category}</div>
 						<div class="date">
 							<FormattedDate date={pubDate} />
 							{

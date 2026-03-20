@@ -1,6 +1,7 @@
 ---
 title: '기술 블로그를 시작하며...'
 description: 'AI 시대에 기술 블로그를 시작하는 이유와, 지식 너머의 경험과 관점을 기록하려는 다짐'
+category: 'AI개념'
 pubDate: 'Mar 03 2026'
 ---
 
